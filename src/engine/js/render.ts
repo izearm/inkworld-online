@@ -265,7 +265,7 @@ PD.Render = (function () {
     const c = cv.getContext('2d'); R.floorOx = m.h * 16;
     const completed = ls && ls.completed, strange = ls && ls.placement === 'strange';
     for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
-      const i = y * m.w + x; if (m.grid[i] !== 0) continue;
+      const i = y * m.w + x; if (m.grid[i] !== 0 || m.blankFloor) continue; // blankFloor: ลานกระดาษขาวหน้าแรก ไม่วาดพื้น
       const sx = R.floorOx + (x - y) * 16, sy = (x + y) * 8, h = U.hash(x, y, 11);
       if (m.book) { bookFloor(c, m.book.style, x, y, sx, sy, h); continue; }
       if (m.desertArena) {
@@ -585,6 +585,7 @@ PD.Render = (function () {
     ent(G.nib.x + G.nib.y, () => SP.drawActor(c, nibS.x, nibS.y, { shape: 'nib', t, z: 14, noShadow: false, color: P.INK }));
 
     if (G.net && G.net.drawRemotes) G.net.drawRemotes({ ent, scr, c, t, inView }); // ออนไลน์: ผู้เล่นคนอื่น (ออฟไลน์ไม่มี G.net)
+    if (G.drawExtra) G.drawExtra({ ent, scr, c, t, inView }); // ฉากพิเศษ (ลานต้นหมึกหน้าแรก)
     list.sort((a, b) => a.k - b.k || (a.wall ? -1 : 0) - (b.wall ? -1 : 0));
     // ---- บังตัวละคร: กำแพงที่อยู่หน้าตัวผู้เล่นและทับกรอบภาพ → โปร่ง ----
     const pk = pl.x + pl.y, pr = { x0: ps.x - 9, y0: ps.y - 27, x1: ps.x + 9, y1: ps.y + 2 };

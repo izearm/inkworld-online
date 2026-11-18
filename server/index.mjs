@@ -63,6 +63,7 @@ export async function startServer({ port = Number(process.env.PORT) || 8787, dis
       return send(res, 200, publicAcc(b));
     }
     const a = await auth(); if (!a) return send(res, 401, { error: 'กรุณาเข้าสู่ระบบใหม่' });
+    if (p === '/api/me' && req.method === 'GET') return send(res, 200, publicAcc(a));   // จำการล็อกอินไว้ในเครื่อง: ตรวจ token แล้วคืนชื่อ + เซฟ
     if (p === '/api/name' && req.method === 'POST') {
       const name = cleanName(body.name);
       if ([...name].length < 2 || [...name].length > 12) return send(res, 400, { error: 'ชื่อยาว 2–12 ตัวอักษร' });
@@ -179,7 +180,7 @@ export async function startServer({ port = Number(process.env.PORT) || 8787, dis
       let m; try { m = JSON.parse(raw); } catch { return; }
       const room = rooms.get(s.room);
       switch (m.t) {
-        case 'join': if (m.area === 'town' || m.area === 'dungeon') { s.st = sanitizeSt(m.st) || s.st; joinRoom(s, m.area); } break;
+        case 'join': if (m.area === 'town' || m.area === 'dungeon') { s.st = sanitizeSt(m.st) || s.st; joinRoom(s, m.area); } else if (m.area === 'solo') { leaveRoom(s); s.area = null; } break;
         case 'st': { const st = sanitizeSt(m); if (!st || !room) break; s.st = st; bcast(room, { t: 'st', id: s.id, ...st }, s.id); break; }
         case 'snap': if (room && room.host === s.id && m.d) { room.snap = m.d; bcast(room, { t: 'snap', d: m.d }, s.id); } break;
         case 'ev': if (room && m.e) {

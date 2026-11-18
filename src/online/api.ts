@@ -17,6 +17,7 @@ async function call(path: string, method: string, body?: any, token?: string) {
 export const Api = {
   register: (id: string, pass: string): Promise<Account> => call('/api/register', 'POST', { id, pass }),
   login: (id: string, pass: string): Promise<Account> => call('/api/login', 'POST', { id, pass }),
+  me: (token: string): Promise<Account> => call('/api/me', 'GET', undefined, token),
   setName: (token: string, name: string) => call('/api/name', 'POST', { name }, token),
   invite: (token: string, code: string) => call('/api/invite', 'POST', { code }, token),
   putSave: (token: string, save: any, savedAt: number, force = false) => call('/api/save', 'PUT', { save, savedAt, force }, token),

@@ -1,5 +1,4 @@
 /* โหมดออนไลน์: หน้าเข้าสู่ระบบ / ตั้งชื่อ / ป้ายสถานะห้อง */
-body.online #menu .mbtn[data-panel="world"] { display: none; }
 #online-ui { position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; background: rgba(248, 244, 234, 0.92); }
 #online-ui.hidden { display: none; }
 #online-ui .ol-box { background: #fffdf6; padding: 18px 22px; min-width: 280px; max-width: 92vw; text-align: center; font-family: inherit; color: #1b1b1b; }
@@ -17,3 +16,25 @@ body.online #menu .mbtn[data-panel="world"] { display: none; }
 #net-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #d23a2a; }
 #net-pill .dot.on { background: #3c9a5c; }
 #net-pill button { font: inherit; font-size: 11px; padding: 1px 8px; border: 1.5px solid #1b1b1b; background: #fff; border-radius: 8px; cursor: pointer; }
+/* ลานต้นหมึก (หน้าแรก) */
+body.title-mode #hud, body.title-mode #rbtns, body.title-mode #btn-act { display: none !important; }
+#title-dark { position: absolute; inset: 0; z-index: 20; background: #0d0d0d; opacity: 0; pointer-events: none; transition: opacity 0.12s linear; }
+#tree-pop { position: absolute; right: 7%; top: 50%; transform: translateY(-50%); z-index: 45; }
+#tree-pop.hidden { display: none; }
+#tree-pop .tp-box { background: #fffdf6; padding: 12px 16px; min-width: 230px; max-width: 86vw; text-align: center; color: #1b1b1b; animation: tp-in 0.25s ease-out; }
+@keyframes tp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+#tree-pop h3 { margin: 0 0 6px; font-size: 16px; }
+#tree-pop .tp-menu { display: flex; flex-direction: column; gap: 6px; }
+#tree-pop button { font: inherit; font-size: 15px; padding: 6px 14px; border: 2px solid #1b1b1b; background: #fff; border-radius: 4px; cursor: pointer; color: #1b1b1b; }
+#tree-pop button small { display: block; font-size: 10px; color: #777; }
+#tree-pop button.soon { color: #888; border-color: #999; border-style: dashed; }
+#tree-pop label { display: block; text-align: left; font-size: 13px; margin: 5px 0; }
+#tree-pop label.ol-small { font-size: 11px; color: #555; }
+#tree-pop input { display: block; width: 100%; box-sizing: border-box; margin-top: 2px; padding: 6px 8px; font: inherit; font-size: 15px; border: 2px solid #1b1b1b; background: #fff; border-radius: 3px; }
+#tree-pop .ol-err { min-height: 16px; color: #d23a2a; font-size: 12px; margin: 3px 0; }
+#tree-pop .ol-sub { margin: 0 0 6px; font-size: 11px; color: #555; }
+#tree-pop .obtns { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
+#tree-pop .ol-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #555; cursor: pointer; text-decoration: underline; }
+#net-offline { position: absolute; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; background: rgba(248, 244, 234, 0.85); }
+#net-offline.hidden { display: none; }
+#net-offline .ol-box { background: #fffdf6; padding: 14px 20px; text-align: center; }

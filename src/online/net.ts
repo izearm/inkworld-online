@@ -22,7 +22,7 @@ export type NetEvents = { status?: (s: string) => void; kicked?: (why: string) =
 export class Net {
   ws: WebSocket | null = null;
   me = ''; name = '';
-  area: 'town' | 'dungeon' | null = null;
+  area: 'town' | 'dungeon' | 'solo' | null = null;   // solo = ด่านเนื้อเรื่อง/ด่านเก่า (เล่นคนเดียว ไม่อยู่ในห้อง)
   roomId = ''; hostId: string | null = null; roomReady = false;
   remotes = new Map<string, Remote>();
   cur: Remote | null = null;          // เป้าหมายระยะไกลที่ AI ศัตรูกำลังเล็งอยู่ (Host)
@@ -74,6 +74,7 @@ export class Net {
         if (m.resumed) break;                                   // ห้องเดิมยังอยู่ (กลับมาทันเวลา) → รอข้อความ room
         if (this.joinedOnce && this.area === 'dungeon') { this.ev.lostRoom?.(); break; } // หลุดนานเกินเวลา → ถูกนำออกจากดันเจี้ยน
         if (this.pendingJoin || this.area) this.join((this.pendingJoin || this.area) as any);
+        else this.join('solo');
         break;
       case 'room': {
         const want = this.area;
@@ -99,7 +100,7 @@ export class Net {
     void G;
   }
 
-  join(area: 'town' | 'dungeon') {
+  join(area: 'town' | 'dungeon' | 'solo') {
     this.area = area; this.roomReady = false; this.hostId = null; this.remotes.clear();
     if (!this.connected) { this.pendingJoin = area; return; }
     this.send({ t: 'join', area, st: this.myState() });
@@ -146,7 +147,7 @@ export class Net {
 
   // ---------- ทุกเฟรม (เรียกหลัง G.frame) ----------
   tick(dt: number) {
-    const G = this.G; if (!G.map || !this.area) return;
+    const G = this.G; if (!G.map || !this.area || this.area === 'solo') return;
     for (const r of this.remotes.values()) {
       const k = Math.min(1, dt * 12); r.x += (r.tx - r.x) * k; r.y += (r.ty - r.y) * k;
       if (r.st?.mv) r.anim += dt; r.invuln = Math.max(0, r.invuln - dt);
@@ -306,29 +307,30 @@ export class Net {
     G.stunPlayer = function (t: number) { if (net.cur) { net.evTo(net.cur.id, { k: 'stun', d: t }); return; } return origStun.call(G, t); };
     G.spawnNextBoss = function (announce: boolean) { if (net.isGuest) return; return origNextBoss.call(G, announce); };
     G.spawnEnemy = function (...a: any[]) { const e = origSpawn.apply(G, a); if (net.isHost && !e.nid) e.nid = net.newNid(); return e; };
-    // แผนที่: เข้าดันเจี้ยน = เข้าห้อง Co-op · กลับเมือง = ห้องเมือง
+    // แผนที่: เมืองออนไลน์ = ห้องเมือง · ดันเจี้ยนออนไลน์ = ห้อง Co-op · ที่อื่น (เนื้อเรื่อง/ด่านเก่า/ลานต้นหมึก) = เล่นคนเดียว
     const origLoad = G.loadMap;
     G.loadMap = function (landId: string, idx: number, entry: string) {
-      const area = landId === ONLINE_DUNGEON ? 'dungeon' : 'town';
-      const prevArea = net.area;
+      const area = landId === ONLINE_DUNGEON ? 'dungeon' : landId === ONLINE_TOWN ? 'town' : 'solo';
       net.area = area; net.roomReady = false; net.hostId = null;   // ระหว่างรอห้อง: ไม่คิด AI ศัตรู
       origLoad.call(G, landId, idx, entry);
       if (area === 'dungeon') { for (const e of G.enemies) e.nid = undefined; }
       net.join(area);
-      void prevArea;
     };
+    const origUse = G.usePortal;
     G.usePortal = function (p: any) {
-      if (G.land.id === ONLINE_TOWN) return G.loadMap(ONLINE_DUNGEON, 0, 'world');
-      if (G.land.id === ONLINE_DUNGEON) return G.loadMap(ONLINE_TOWN, 0, 'world');
+      if (G.land.id === ONLINE_TOWN && p.to === 'next') return G.loadMap(ONLINE_DUNGEON, 0, 'world');   // ประตูตะวันออก → ป่าเงาหมึก Co-op
+      if (G.land.id === ONLINE_DUNGEON) return G.loadMap(ONLINE_TOWN, 0, 'fwd');                        // ประตูในป่า → กลับเมืองฝั่งตะวันออก
+      return origUse.call(G, p);
     };
     const origLabel = G.portalLabel;
     G.portalLabel = function (p: any) {
-      if (G.land.id === ONLINE_TOWN) return 'ป่าเงาหมึก (Co-op 2 คน · Lv50)';
       if (G.land.id === ONLINE_DUNGEON) return 'เมืองหมึกออนไลน์';
       return origLabel.call(G, p);
     };
     // ตายในโหมดออนไลน์: เสีย EXP ตามกติกาเดิม ไม่เสียของ แล้วเกิดใหม่ที่ทางเข้าทันที (โลกของเพื่อนไม่หยุด)
+    const origDie = G.die;
     G.die = function () {
+      if (net.area !== 'dungeon' && net.area !== 'town') return origDie.call(G);   // ด่านเนื้อเรื่อง/ด่านเก่า: ตายตามกติกาเดิม
       const P = G.S.player, CFG = D().config, pl = G.player;
       G.S.deaths++; const loss = Math.floor(P.exp * CFG.deathExpLossPct); P.exp -= loss;
       pl.atk = null; pl.poisonT = 0; pl.stunT = 0; pl.freezeCast = null; pl.dashT = 0; pl.castT = 0;

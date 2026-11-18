@@ -1,5 +1,5 @@
-// ทดสอบออนไลน์: 2 เบราว์เซอร์ → สมัคร/ตั้งชื่อ → เมือง (เห็นกัน เห็นชื่อคนอื่น) → ดันเจี้ยน Co-op (ศัตรู/ดาเมจ/การตายตรงกัน)
-// → หลุด/ต่อใหม่ (Guest และ Host) → ออก → เซฟออฟไลน์เดิมยังเล่นต่อได้
+// ทดสอบทางเข้าเดียว + ออนไลน์: ลานต้นหมึก → สมัคร → ตั้งชื่อ → เนื้อเรื่อง → ปลดล็อกเมืองออนไลน์ → Co-op 2 คน
+// → หลุด/ต่อใหม่ → กลับด่านเก่า (เล่นคนเดียว) → ปิดแล้วเปิดใหม่ เล่นต่อจากเซฟบนบัญชี → เน็ตหลุดเกมหยุด
 // รัน: npm run build && node tests/play/online_coop.cjs   (ตั้ง CHROME=/path/to/chrome ได้)
 const path = require('node:path');
 const fs = require('node:fs');
@@ -11,6 +11,7 @@ const results = [];
 const check = (name, ok, info = '') => { results.push({ name, ok: !!ok }); console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? ' · ' + info : '')); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function waitFor(page, fn, arg, ms = 8000) { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (await page.evaluate(fn, arg).catch(() => false)) return true; await sleep(100); } return false; }
+const toTree = page => page.evaluate(() => { const pl = PD.Game.player; pl.x = 25.5; pl.y = 27.2; });
 
 (async () => {
   const { startServer } = await import(path.join(ROOT, 'server/index.mjs'));
@@ -20,144 +21,149 @@ async function waitFor(page, fn, arg, ms = 8000) { const t0 = Date.now(); while 
   const BASE = 'http://localhost:' + srv.port;
   const browser = await chromium.launch({ executablePath: process.env.CHROME || '/usr/bin/google-chrome', args: ['--no-sandbox', '--autoplay-policy=no-user-gesture-required'] });
   const errors = [];
-  async function player(user, name, seedSave) {
+  const readAcc = () => JSON.parse(fs.readFileSync(dataFile, 'utf8')).accounts;
+  async function newPlayer(user, name, invite) {
     const ctx = await browser.newContext({ viewport: { width: 844, height: 390 } });
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(user + ': ' + e.message));
-    await page.goto(BASE + '/online.html');
-    await page.waitForSelector('#ol-id');
-    if (seedSave) await page.evaluate(() => { // เซฟออฟไลน์ที่จบ 7 ด่านแล้ว (Lv50) จำลอง
-      const G = PD.Game, s = G.freshSave(); s.ended = true; s.endingStage = 'return'; s.player.level = 50; s.player.lumi = 1234;
-      s.quests = { q_village: { step: 9, done: true } }; s.loc = { land: 'village', map: 0, x: 10.5, y: 11.5 }; s._savedAt = Date.now() - 60000;
-      localStorage.setItem('paperdungeon_inkworld_save_v1', JSON.stringify(s));
-    });
-    await page.fill('#ol-id', user); await page.fill('#ol-pass', 'pass1234');
-    await page.click('#ol-reg');
+    await page.goto(BASE + '/index.html');
+    await waitFor(page, () => window.__online && __online.title.active && PD.Game.land && PD.Game.land.id === 'title_field');
+    await toTree(page); await page.waitForSelector('#tp-play');
+    await page.click('#tp-play');
+    await page.fill('#ol-id', user); await page.fill('#ol-pass', 'pass1234'); await page.click('#ol-reg');
     await page.waitForSelector('#ol-name');
-    await page.fill('#ol-name', name); await page.click('#ol-name-ok');
-    await waitFor(page, () => window.__online.inSession && __online.net && __online.net.roomReady && PD.Game.land.id === 'online_town');
+    await page.fill('#ol-name', name); if (invite) await page.fill('#ol-invite', invite);
+    await page.click('#ol-name-ok');
+    await waitFor(page, () => __online.inGame && PD.Game.land.id !== 'title_field');
     return { ctx, page };
+  }
+  async function goOnlineTown(page) {
+    await page.evaluate(() => { const G = PD.Game, gw = PD_DATA.config.worldGrid;
+      for (let r = 0; r < gw.rows; r++) for (let c = 0; c < gw.cols; c++) if (G.placeLand('online_town', c, r)) { G.travel('online_town'); return; } });
+    return waitFor(page, () => PD.Game.land.id === 'online_town' && __online.net && __online.net.roomReady && __online.net.area === 'town');
   }
 
   try {
-    // ---------- ล็อก: ยังไม่จบ 7 ด่าน ----------
+    // ---------- ลานต้นหมึก ----------
     {
-      const ctx = await browser.newContext(); const page = await ctx.newPage();
-      await page.goto(BASE + '/online.html'); await page.waitForSelector('#ol-id');
-      await page.fill('#ol-id', 'newbie'); await page.fill('#ol-pass', 'pass1234'); await page.click('#ol-reg');
-      await page.waitForTimeout(500);
-      check('ล็อกโหมดออนไลน์ถ้ายังไม่จบ 7 ด่าน', (await page.textContent('#online-ui')).includes('ยังเข้าโหมดออนไลน์ไม่ได้'));
-      await page.fill('#ol-invite', 'WRONG'); await page.click('#ol-invite-ok'); await page.waitForTimeout(400);
-      check('รหัสเชิญผิด: ไม่ปลดล็อก', (await page.textContent('#online-ui')).includes('รหัสเชิญไม่ถูกต้อง'));
-      await page.fill('#ol-invite', 'inktest'); await page.click('#ol-invite-ok');
-      await page.waitForSelector('#ol-name'); await page.fill('#ol-name', 'ผู้ทดสอบ'); await page.click('#ol-name-ok');
-      const ok = await waitFor(page, () => window.__online.inSession && PD.Game.land.id === 'online_town' && __online.net.roomReady);
-      const info = await page.evaluate(() => ({ lv: PD.Game.S.player.level, test: __online.base.testChar, gear: Object.values(PD.Game.S.player.gear).filter(Boolean).length, local: localStorage.getItem('paperdungeon_inkworld_save_v1') }));
-      check('รหัสเชิญถูก: ได้ตัวทดสอบ Lv50 ครบชุด เข้าเมืองได้', ok && info.lv === 50 && info.test && info.gear === 4, JSON.stringify({ lv: info.lv, gear: info.gear }));
-      await page.evaluate(() => __online.syncNow());
-      check('ตัวทดสอบไม่เขียนเซฟในเครื่อง', (await page.evaluate(() => localStorage.getItem('paperdungeon_inkworld_save_v1'))) === null);
+      const ctx = await browser.newContext({ viewport: { width: 844, height: 390 } }); const page = await ctx.newPage();
+      page.on('pageerror', e => errors.push('title: ' + e.message));
+      await page.goto(BASE + '/online.html');
+      check('online.html พากลับหน้าแรก', await waitFor(page, () => location.pathname.endsWith('/index.html') && window.__online && __online.title.active));
+      check('หน้าแรก: ลานต้นหมึก ไม่มี HUD/เมนู ป๊อปอัปยังไม่ขึ้น', await page.evaluate(() => PD.Game.land.id === 'title_field' && document.body.classList.contains('title-mode') && document.getElementById('tree-pop').classList.contains('hidden')));
+      await toTree(page); await sleep(200);
+      check('เดินใกล้ต้นไม้ → ป๊อปอัป เข้าเกม/เข้าชม/เร็วๆ นี้', await page.evaluate(() => { const t = document.getElementById('tree-pop').innerText; return t.includes('เข้าเกม') && t.includes('เข้าชม') && t.includes('เร็วๆ นี้'); }));
+      await page.screenshot({ path: path.join(ROOT, 'tests/play/title_tree.png') });
+      await page.evaluate(() => { const pl = PD.Game.player; pl.x = 25.5; pl.y = 29.6; }); await sleep(200);
+      const mid = await page.evaluate(() => ({ d: __online.title.dark, pop: document.getElementById('tree-pop').classList.contains('hidden') }));
+      await page.evaluate(() => { const pl = PD.Game.player; pl.x = 25.5; pl.y = 45; }); await sleep(200);
+      const far = await page.evaluate(() => ({ d: __online.title.dark, dist: Math.hypot(PD.Game.player.x - 25.5, PD.Game.player.y - 25.5) }));
+      check('เดินออกห่าง → ค่อยๆ มืด และป๊อปอัปหาย', mid.d > 0.05 && mid.d < far.d && mid.pop, 'มืด ' + mid.d.toFixed(2) + ' → ' + far.d.toFixed(2));
+      check('ขอบลาน: เดินเกิน 6.2 ช่องจากต้นไม้ไม่ได้', far.dist <= 6.21, far.dist.toFixed(2));
+      await page.screenshot({ path: path.join(ROOT, 'tests/play/title_dark.png') });
+      await page.evaluate(() => { const pl = PD.Game.player; pl.x = 25.5; pl.y = 27.5; }); await sleep(200);
+      check('เดินกลับหาต้นไม้ → สว่างขึ้น', await page.evaluate(() => __online.title.dark < 0.01));
+      await page.click('#tp-play');
+      await page.fill('#ol-id', 'x'); await page.fill('#ol-pass', '1'); await page.click('#ol-login'); await sleep(300);
+      check('ล็อกอินผิด → แจ้งในป๊อปอัป', (await page.textContent('#tree-pop')).includes('ไม่ถูกต้อง'));
       await ctx.close();
     }
-    const A = await player('alice', 'อลิซ', true);
-    const B = await player('bob_2', 'บ็อบ', true);
-    const offlineBefore = await A.page.evaluate(() => JSON.parse(localStorage.getItem('paperdungeon_inkworld_save_v1')));
+
+    // ---------- ผู้เล่นใหม่: เริ่มเนื้อเรื่อง ----------
+    const A = await newPlayer('alice', 'อลิซ');
+    const a0 = await A.page.evaluate(() => ({ land: PD.Game.land.id, lv: PD.Game.S.player.level, pend: PD.Game.S.pendingPages.includes('online_town'), hud: !document.getElementById('hud').classList.contains('hidden') }));
+    check('ผู้เล่นใหม่: เริ่มเรื่องที่หมู่บ้าน Lv1 ยังไม่มีเมืองออนไลน์', a0.land === 'village' && a0.lv === 1 && !a0.pend && a0.hud, JSON.stringify(a0));
+    await A.page.evaluate(() => __online.syncNow()); await sleep(400);
+    check('เซฟอยู่บนบัญชี (เซิร์ฟเวอร์)', !!readAcc().alice?.save);
+    await A.page.evaluate(() => { const G = PD.Game; G.state = 'play'; G.S.ended = true; G.S.player.level = 50; G.recalc(); G.unlockPostLands(true); });
+    check('จบ 7 ด่าน → เมืองออนไลน์รอวางบนแผนที่โลก', await A.page.evaluate(() => PD.Game.S.pendingPages.includes('online_town')));
+    check('วางเมืองออนไลน์แล้วเดินทางเข้าได้', await goOnlineTown(A.page));
+
+    // ---------- ผู้ทดสอบ: รหัสเชิญ ----------
+    const B = await newPlayer('bob_2', 'บ็อบ', 'inktest');
+    const b0 = await B.page.evaluate(() => ({ lv: PD.Game.S.player.level, ended: PD.Game.S.ended, pend: PD.Game.S.pendingPages.includes('online_town'), test: PD.Game.S.testChar }));
+    check('รหัสเชิญ: ตัวทดสอบ Lv50 จบเรื่องแล้ว มีเมืองออนไลน์รอวาง', b0.lv === 50 && b0.ended && b0.pend && b0.test, JSON.stringify(b0));
+    await B.page.evaluate(() => { PD.Game.state = 'play'; });
+    check('ผู้ทดสอบเข้าเมืองออนไลน์ได้', await goOnlineTown(B.page));
 
     // ---------- เมือง ----------
-    const seen = await waitFor(B.page, () => [...__online.net.remotes.values()].some(r => r.name === 'อลิซ' && r.st));
-    check('เมือง: B เห็น A พร้อมชื่อ', seen);
-    check('เมือง: ไม่มีตัวเราในรายชื่อผู้เล่นอื่น (ไม่วาดชื่อตัวเอง)', await A.page.evaluate(() => ![...__online.net.remotes.keys()].includes(__online.net.me)));
+    check('เมือง: B เห็น A พร้อมชื่อ', await waitFor(B.page, () => [...__online.net.remotes.values()].some(r => r.name === 'อลิซ' && r.st)));
+    check('เมือง: ไม่มีตัวเราในรายชื่อผู้เล่นอื่น', await A.page.evaluate(() => ![...__online.net.remotes.keys()].includes(__online.net.me)));
     await A.page.keyboard.down('KeyD'); await sleep(900); await A.page.keyboard.up('KeyD'); await sleep(600);
     const posA = await A.page.evaluate(() => ({ x: PD.Game.player.x, y: PD.Game.player.y }));
     const viewB = await B.page.evaluate(() => { const r = [...__online.net.remotes.values()].find(r => r.name === 'อลิซ'); return { x: r.x, y: r.y }; });
-    const moved = Math.hypot(posA.x - offlineBefore.loc.x, posA.y - offlineBefore.loc.y);
-    check('เมือง: การเดินของ A ตรงกันบนจอ B', Math.hypot(posA.x - viewB.x, posA.y - viewB.y) < 0.3, 'A=' + posA.x.toFixed(2) + ',' + posA.y.toFixed(2) + ' B เห็น=' + viewB.x.toFixed(2) + ',' + viewB.y.toFixed(2));
-    void moved;
-    check('เมือง: มีร้านค้าและ NPC', await A.page.evaluate(() => ['merchant_online', 'keeper_online', 'guide_online', 'artifact_keeper'].every(id => PD.Game.npcs.some(n => n.id === id))));
+    check('เมือง: การเดินของ A ตรงกันบนจอ B', Math.hypot(posA.x - viewB.x, posA.y - viewB.y) < 0.3);
+    check('เมือง: ร้านค้า รับฝาก ผู้นำทาง Artifact + ประตูดันเจี้ยน/แผนที่โลก', await A.page.evaluate(() => ['merchant_online', 'keeper_online', 'guide_online', 'artifact_keeper'].every(id => PD.Game.npcs.some(n => n.id === id)) && PD.Game.map.portals.some(p => p.to === 'next') && PD.Game.map.portals.some(p => p.to === 'world')));
     await A.page.screenshot({ path: path.join(ROOT, 'tests/play/online_town.png') });
 
     // ---------- ดันเจี้ยน ----------
-    await A.page.evaluate(() => PD.Game.usePortal({ to: 'world' }));
+    await A.page.evaluate(() => PD.Game.usePortal({ to: 'next' }));
     await waitFor(A.page, () => __online.net.isHost);
-    await B.page.evaluate(() => PD.Game.usePortal({ to: 'world' }));
+    await B.page.evaluate(() => PD.Game.usePortal({ to: 'next' }));
     await waitFor(B.page, () => __online.net.roomReady && __online.net.area === 'dungeon' && PD.Game.enemies.length > 0);
     const room = await Promise.all([A, B].map(p => p.page.evaluate(() => ({ room: __online.net.roomId, host: __online.net.hostId, me: __online.net.me, isHost: __online.net.isHost }))));
-    check('ดันเจี้ยน: อยู่ห้องเดียวกัน A เป็น Host B เป็น Guest', room[0].room === room[1].room && room[0].isHost && !room[1].isHost && room[1].host === room[0].me, JSON.stringify(room));
+    check('ดันเจี้ยน: ห้องเดียวกัน A Host / B Guest', room[0].room === room[1].room && room[0].isHost && !room[1].isHost && room[1].host === room[0].me);
     await sleep(500);
-    const enemyIds = await Promise.all([A, B].map(p => p.page.evaluate(() => PD.Game.enemies.filter(e => !e.dead).map(e => e.nid).sort().join('|'))));
-    check('ดันเจี้ยน: ศัตรูชุดเดียวกันทั้งสองเครื่อง', enemyIds[0] === enemyIds[1] && enemyIds[0].length > 0, (enemyIds[0].split('|').length) + ' ตัว');
-    // B ยืนข้างศัตรู แล้วตีด้วยระบบเดิม (G.damageEnemy) → Host หัก HP
-    const target = await A.page.evaluate(() => { const e = PD.Game.enemies.find(e => !e.dead && !e.def.boss); return { nid: e.nid, hp: e.hp, x: e.x, y: e.y }; });
+    const ids = await Promise.all([A, B].map(p => p.page.evaluate(() => PD.Game.enemies.filter(e => !e.dead).map(e => e.nid).sort().join('|'))));
+    check('ดันเจี้ยน: ศัตรูชุดเดียวกันทั้งสองเครื่อง', ids[0] === ids[1] && ids[0].length > 0, ids[0].split('|').length + ' ตัว');
+    const target = await A.page.evaluate(() => { const e = PD.Game.enemies.find(e => !e.dead && !e.def.boss); return { nid: e.nid, hp: e.hp }; });
     await B.page.evaluate(t => { const G = PD.Game, e = G.enemies.find(e => e.nid === t.nid); G.player.x = e.x - 0.8; G.player.y = e.y; G.damageEnemy(e, { dmg: 40, crit: false }, { src: 'attack' }); }, target);
     await sleep(500);
-    const hpAfter = await Promise.all([A, B].map(p => p.page.evaluate(id => PD.Game.enemies.find(e => e.nid === id).hp, target.nid)));
-    check('ต่อสู้: ดาเมจจาก Guest หัก HP ศัตรูที่ Host และจอทั้งสองตรงกัน', hpAfter[0] < target.hp && Math.abs(hpAfter[0] - hpAfter[1]) < 1, 'HP ' + target.hp + ' → A:' + hpAfter[0] + ' B:' + hpAfter[1]);
-    const expB0 = await B.page.evaluate(() => ({ exp: PD.Game.S.player.exp, kills: PD.Game.S.kills, lvl: PD.Game.S.player.level }));
+    const hp = await Promise.all([A, B].map(p => p.page.evaluate(id => PD.Game.enemies.find(e => e.nid === id).hp, target.nid)));
+    check('ต่อสู้: Guest ตี → Host หัก HP และสองจอตรงกัน', hp[0] < target.hp && Math.abs(hp[0] - hp[1]) < 1, target.hp + ' → ' + hp.join('/'));
+    const k0 = await B.page.evaluate(() => PD.Game.S.kills);
     await B.page.evaluate(id => { const G = PD.Game, e = G.enemies.find(e => e.nid === id); G.damageEnemy(e, { dmg: 1e7, crit: true }, { src: 'attack' }); }, target.nid);
     await sleep(600);
     const dead = await Promise.all([A, B].map(p => p.page.evaluate(id => { const e = PD.Game.enemies.find(e => e.nid === id); return !e || e.dead; }, target.nid)));
-    const expB1 = await B.page.evaluate(() => ({ exp: PD.Game.S.player.exp, kills: PD.Game.S.kills, lvl: PD.Game.S.player.level }));
-    check('ต่อสู้: ศัตรูตายตรงกันทั้งสองเครื่อง (Host ยืนยัน)', dead[0] && dead[1]);
-    check('ต่อสู้: Guest ได้ EXP/นับการฆ่าจากการยืนยันของ Host', expB1.kills === expB0.kills + 1 && (expB1.exp !== expB0.exp || expB1.lvl > expB0.lvl), JSON.stringify(expB0) + ' → ' + JSON.stringify(expB1));
-    // Host ฆ่าเอง → Guest เห็นตาย
-    const t2 = await A.page.evaluate(() => { const G = PD.Game, e = G.enemies.find(e => !e.dead && !e.def.boss); G.damageEnemy(e, { dmg: 1e7, crit: false }, { src: 'attack' }); return e.nid; });
-    await sleep(500);
-    check('ต่อสู้: Host ฆ่า → Guest เห็นศัตรูตาย', await B.page.evaluate(id => { const e = PD.Game.enemies.find(e => e.nid === id); return !e || e.dead; }, t2));
-    // ศัตรูของ Host โจมตี Guest
+    check('ต่อสู้: ศัตรูตายตรงกัน + Guest ได้นับการฆ่า', dead[0] && dead[1] && (await B.page.evaluate(() => PD.Game.S.kills)) === k0 + 1);
     await A.page.evaluate(() => { const G = PD.Game; G.player.x = G.map.spawnBack.x; G.player.y = G.map.spawnBack.y; G.player.immortalT = 999; });
     await B.page.evaluate(() => { const G = PD.Game, e = G.enemies.filter(e => !e.dead && !e.def.boss).sort((a, b) => b.x - a.x)[0]; G.player.x = e.x - 0.6; G.player.y = e.y; });
-    const hurt = await waitFor(B.page, () => __online.net.stats.hurtsIn > 0, null, 12000);
-    check('ต่อสู้: ศัตรูที่ Host ควบคุมโจมตี Guest ได้ (Guest หักเกราะเอง)', hurt, 'hurtsIn=' + await B.page.evaluate(() => __online.net.stats.hurtsIn));
+    check('ต่อสู้: ศัตรูของ Host ตี Guest ได้', await waitFor(B.page, () => __online.net.stats.hurtsIn > 0, null, 12000));
     await B.page.evaluate(() => { const G = PD.Game; G.player.x = G.map.spawnBack.x + 1; G.player.y = G.map.spawnBack.y; G.player.immortalT = 999; });
-    await A.page.screenshot({ path: path.join(ROOT, 'tests/play/online_dungeon_host.png') });
-    await B.page.screenshot({ path: path.join(ROOT, 'tests/play/online_dungeon_guest.png') });
 
-    // ---------- หลุด/ต่อใหม่: Guest ----------
+    // ---------- หลุด / ต่อใหม่ ----------
     await B.page.evaluate(() => __online.net.dropForTest());
-    check('หลุด: Host เห็น Guest เป็น "หลุด"', await waitFor(A.page, () => [...__online.net.remotes.values()].some(r => r.away), null, 3000));
-    const back = await waitFor(B.page, () => __online.net.roomReady && __online.net.area === 'dungeon', null, 8000);
-    const sameRoom = back && await B.page.evaluate(r => __online.net.roomId === r, room[0].room);
-    check('ต่อใหม่: Guest กลับเข้าห้องเดิมภายในเวลา', sameRoom);
-    check('ต่อใหม่: Host เห็น Guest กลับมา', await waitFor(A.page, () => [...__online.net.remotes.values()].every(r => !r.away), null, 3000));
+    check('Guest หลุด → Host เห็น "หลุด"', await waitFor(A.page, () => [...__online.net.remotes.values()].some(r => r.away), null, 3000));
+    check('Guest ต่อใหม่ → ห้องเดิม', await waitFor(B.page, r => __online.net.roomReady && __online.net.roomId === r, room[0].room, 8000));
+    await A.page.evaluate(() => __online.net.dropForTest());
+    check('Host หลุด → Guest เป็น Host ทันที', await waitFor(B.page, () => __online.net.isHost, null, 3000));
+    check('Host เดิมกลับมาเป็น Guest', await waitFor(A.page, () => __online.net.roomReady && !__online.net.isHost && __online.net.area === 'dungeon', null, 8000));
 
-    // ---------- หลุด: Host → สลับ Host ----------
-    await A.page.evaluate(() => { __online.net.dropForTest(); });
-    const became = await waitFor(B.page, () => __online.net.isHost, null, 3000);
-    check('Host หลุด: Guest ได้เป็น Host ทันทีและคุมศัตรูต่อ', became && await B.page.evaluate(() => PD.Game.enemies.every(e => e.nid)));
-    const aBack = await waitFor(A.page, () => __online.net.roomReady && !__online.net.isHost && __online.net.area === 'dungeon', null, 8000);
+    // ---------- กลับด่านเก่า: เล่นคนเดียว ----------
+    await A.page.evaluate(() => PD.Game.usePortal({ to: 'world' }));
+    check('ออกจากดันเจี้ยน → กลับเมือง', await waitFor(A.page, () => PD.Game.land.id === 'online_town' && __online.net.area === 'town' && __online.net.roomReady));
+    await A.page.evaluate(() => PD.Game.travel('village'));
     await sleep(600);
-    const ids2 = await Promise.all([A, B].map(p => p.page.evaluate(() => PD.Game.enemies.filter(e => !e.dead).map(e => e.nid).sort().join('|'))));
-    check('Host เดิมกลับมาเป็น Guest และเห็นศัตรูชุดเดียวกัน', aBack && ids2[0] === ids2[1]);
+    check('ไปด่านเก่าได้ (หมู่บ้าน) และไม่อยู่ในห้องออนไลน์', await A.page.evaluate(() => PD.Game.land.id === 'village' && __online.net.area === 'solo' && __online.net.remotes.size === 0));
+    check('ผู้เล่นอื่นไม่เห็นคนที่อยู่ด่านเก่า', await waitFor(B.page, () => ![...__online.net.remotes.values()].some(r => r.name === 'อลิซ'), null, 3000));
 
-    // ---------- หลุดนานเกินเวลา → กลับเมือง ----------
-    await A.page.evaluate(() => { const n = __online.net; n.ws.onclose = null; n.ws.close(); n.ws = null; n.roomReady = false; window.__reconnectLater = () => n.connect(); });
-    await sleep(7000);
-    await A.page.evaluate(() => window.__reconnectLater());
-    check('หลุดเกิน 30 วิ (ทดสอบตั้ง 6 วิ): กลับมาที่เมือง', await waitFor(A.page, () => PD.Game.land.id === 'online_town' && __online.net.area === 'town' && __online.net.roomReady, null, 8000));
+    // ---------- เน็ตหลุด: ต้องออนไลน์เสมอ ----------
+    await A.page.route('**/api/save', r => r.abort());
+    await A.page.evaluate(async () => { await __online.syncNow(); await __online.syncNow(); });
+    check('บันทึกไม่ได้ → เกมหยุดพร้อมแจ้ง "ขาดการเชื่อมต่อ"', await A.page.evaluate(() => PD.Game.state === 'offline' && !document.getElementById('net-offline').classList.contains('hidden')));
+    await A.page.unroute('**/api/save');
+    check('ต่อได้อีกครั้ง → เกมเดินต่อ', await waitFor(A.page, () => PD.Game.state !== 'offline' && document.getElementById('net-offline').classList.contains('hidden'), null, 9000));
 
-    // ---------- ออก + เซฟ ----------
-    const lvlA = await A.page.evaluate(() => { PD.Game.S.player.lumi += 77; return PD.Game.S.player.lumi; });
-    await A.page.click('#net-leave'); await A.page.click('#cf-yes');
-    await A.page.waitForSelector('text=ออกจากออนไลน์แล้ว');
-    const local = await A.page.evaluate(() => JSON.parse(localStorage.getItem('paperdungeon_inkworld_save_v1')));
-    const backup = await A.page.evaluate(() => !!localStorage.getItem('paperdungeon_inkworld_save_v1_backup_online'));
-    check('ออก: เซฟในเครื่องได้ตัวละครล่าสุด (Lumi)', local.player.lumi === lvlA, local.player.lumi + ' vs ' + lvlA);
-    check('ออก: ตำแหน่ง/เควส/ฉากจบของเกมออฟไลน์ไม่ถูกแก้', JSON.stringify(local.loc) === JSON.stringify(offlineBefore.loc) && JSON.stringify(local.quests) === JSON.stringify(offlineBefore.quests) && local.ended === true && JSON.stringify(local.lands) === JSON.stringify(offlineBefore.lands));
-    check('ออก: มีสำเนาสำรองเซฟเดิม', backup);
-    await sleep(400); // ที่เก็บแบบไฟล์เขียนลงดิสก์ทุก 200ms
-    const acc = JSON.parse(fs.readFileSync(dataFile, 'utf8')).accounts.alice;
-    check('ออก: เซิร์ฟเวอร์เก็บเซฟเดียวกัน', acc.save && acc.save.player.lumi === lvlA && acc.name === 'อลิซ');
-    // เปิดเกมออฟไลน์ในเบราว์เซอร์เดิม → เล่นต่อได้
-    await A.page.goto(BASE + '/index.html');
-    await A.page.waitForSelector('#ob-cont');
-    check('ออฟไลน์: หน้าแรกมีปุ่ม "ออนไลน์"', await A.page.$('#ob-online'));
-    await A.page.evaluate(() => { PD.UI.hideOverlay(); PD.Game.continueGame(); });
-    await sleep(500);
-    const off = await A.page.evaluate(() => ({ st: PD.Game.state, land: PD.Game.land.id, lumi: PD.Game.S.player.lumi, x: PD.Game.player.x }));
-    check('ออฟไลน์: เล่นต่อจากเซฟเดิมได้ (ที่เดิม + ตัวละครล่าสุด)', off.st === 'play' && off.land === 'village' && off.lumi === lvlA && Math.abs(off.x - 10.5) < 0.01, JSON.stringify(off));
-    // ล็อกอินใหม่: เซิร์ฟเวอร์ใหม่กว่า/เท่ากัน → ใช้ตัวเดิม
-    await A.page.goto(BASE + '/online.html'); await A.page.waitForSelector('#ol-id');
-    await A.page.fill('#ol-id', 'alice'); await A.page.fill('#ol-pass', 'pass1234'); await A.page.click('#ol-login');
-    check('เข้าสู่ระบบอีกครั้ง: ข้ามหน้าตั้งชื่อ เข้าเมืองได้เลย', await waitFor(A.page, () => window.__online.inSession && PD.Game.land.id === 'online_town'));
+    // ---------- ปิดแล้วเปิดใหม่ → เล่นต่อจากเซฟบนบัญชี ----------
+    const lumi = await A.page.evaluate(async () => { PD.Game.S.player.lumi += 77; await __online.syncNow(); return PD.Game.S.player.lumi; });
+    await A.page.reload();
+    await waitFor(A.page, () => window.__online && __online.title.active && __online.acc);
+    await toTree(A.page); await A.page.waitForSelector('#tp-play');
+    check('เปิดใหม่: จำการล็อกอิน แสดงชื่อในปุ่มเข้าเกม', (await A.page.textContent('#tp-play')).includes('อลิซ'));
+    await A.page.click('#tp-play');
+    await waitFor(A.page, () => __online.inGame && PD.Game.land.id !== 'title_field');
+    const back = await A.page.evaluate(() => ({ land: PD.Game.land.id, lumi: PD.Game.S.player.lumi, town: !!PD.Game.S.lands.online_town }));
+    check('เล่นต่อจากที่เดิมด้วยตัวละครล่าสุด', back.land === 'village' && back.lumi === lumi && back.town, JSON.stringify(back));
+    await A.page.evaluate(() => PD.UI.showTitle());
+    check('กลับหน้าแรกได้ (บันทึกก่อนออก)', await waitFor(A.page, () => __online.title.active && !__online.inGame));
+
+    // ---------- เครื่องมือ Editor ยังเปิดแบบเดิม ----------
+    {
+      const ctx = await browser.newContext(); const page = await ctx.newPage();
+      await page.goto(BASE + '/index.html?preview=1');
+      check('?preview=1 (Editor) เปิดหน้าเดิมได้โดยไม่ต้องล็อกอิน', await waitFor(page, () => !!document.getElementById('ob-new') && !window.__online));
+      await ctx.close();
+    }
     check('ไม่มี error ในหน้าเว็บ', errors.length === 0, errors.slice(0, 3).join(' | '));
   } catch (e) { console.error(e); check('สคริปต์ทดสอบทำงานจบ', false, e.message); }
   await browser.close(); await srv.close();
