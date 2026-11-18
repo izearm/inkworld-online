@@ -1,0 +1,355 @@
+{
+ "schemaVersion": 1,
+ "revision": 1,
+ "items": [
+  {
+   "id": "old_woman",
+   "name": "ยายไม่มีชื่อ",
+   "landId": "village",
+   "pos": [
+    0.38,
+    0.42
+   ],
+   "dialogue": {
+    "idle": "v_old_idle",
+    "done": "v_old_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "hunch": true,
+     "cane": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "man_bucket",
+   "name": "ชายถือถังเปล่า",
+   "landId": "village",
+   "pos": [
+    0.62,
+    0.34
+   ],
+   "dialogue": {
+    "idle": "v_man_idle",
+    "done": "v_man_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "bucket": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "girl_window",
+   "name": "เด็กหญิงริมหน้าต่าง",
+   "landId": "village",
+   "pos": [
+    0.46,
+    0.7
+   ],
+   "dialogue": {
+    "idle": "v_girl_idle",
+    "done": "v_girl_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "kid": true,
+     "hair": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "kid_tom",
+   "name": "โท",
+   "landId": "slime_cave",
+   "pos": [
+    0.42,
+    0.5
+   ],
+   "dialogue": {
+    "idle": "s_kid_idle",
+    "done": "s_kid_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "kid": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "slime_pom",
+   "name": "ปอม",
+   "landId": "slime_cave",
+   "pos": [
+    0.7,
+    0.48
+   ],
+   "dialogue": {
+    "idle": "s_pom_idle",
+    "done": "s_pom_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "slime",
+    "scale": 1,
+    "flags": {
+     "friendly": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "librarian_nim",
+   "name": "บรรณารักษ์นิ่ม",
+   "landId": "ink_library",
+   "pos": [
+    0.5,
+    0.42
+   ],
+   "dialogue": {
+    "idle": "l_nim_idle",
+    "done": "l_nim_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "glasses": true,
+     "hair": true,
+     "book": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "boy_reader",
+   "name": "เด็กที่อ่านหนังสือว่าง",
+   "landId": "ink_library",
+   "pos": [
+    0.3,
+    0.62
+   ],
+   "dialogue": {
+    "idle": "l_boy_idle",
+    "done": "l_boy_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "kid": true,
+     "book": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "farmer_dang",
+   "name": "ลุงแดง",
+   "landId": "pencil_field",
+   "pos": [
+    0.42,
+    0.45
+   ],
+   "dialogue": {
+    "idle": "f_dang_idle",
+    "done": "f_dang_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "hat": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "scarecrow",
+   "name": "หุ่นไล่กาดินสอ",
+   "landId": "pencil_field",
+   "pos": [
+    0.6,
+    0.62
+   ],
+   "dialogue": {
+    "idle": "f_scare_idle",
+    "done": "f_scare_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "scarecrow": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "prince_ori",
+   "name": "เจ้าชายโอริ",
+   "landId": "folded_castle",
+   "pos": [
+    0.5,
+    0.3
+   ],
+   "dialogue": {
+    "idle": "c_ori_idle",
+    "done": "c_ori_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "crown": true,
+     "cape": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "crane_guard",
+   "name": "นกกระเรียนเฝ้าประตู",
+   "landId": "folded_castle",
+   "pos": [
+    0.38,
+    0.56
+   ],
+   "dialogue": {
+    "idle": "c_crane_idle",
+    "done": "c_crane_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "bird",
+    "scale": 1,
+    "flags": {
+     "big": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "mermaid_lin",
+   "name": "ลิน",
+   "landId": "ink_sea",
+   "pos": [
+    0.5,
+    0.36
+   ],
+   "dialogue": {
+    "idle": "o_lin_idle",
+    "done": "o_lin_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "mermaid",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "fisher_old",
+   "name": "ตาแก่หาปลา",
+   "landId": "ink_sea",
+   "pos": [
+    0.3,
+    0.6
+   ],
+   "dialogue": {
+    "idle": "o_fisher_idle",
+    "done": "o_fisher_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "human",
+    "scale": 1,
+    "flags": {
+     "hat": true,
+     "rod": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "tree_spirit",
+   "name": "ต้นหมึก",
+   "landId": "ink_tree",
+   "pos": [
+    0.5,
+    0.3
+   ],
+   "dialogue": {
+    "idle": "t_tree_idle",
+    "done": "t_tree_done"
+   },
+   "visual": {
+    "type": "procedural",
+    "shape": "tree",
+    "scale": 1.3,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "eraser_npc",
+   "name": "ผู้ลบ",
+   "landId": "ink_tree",
+   "pos": [
+    0.62,
+    0.42
+   ],
+   "dialogue": {
+    "idle": "t_eraser_done",
+    "done": "t_eraser_done"
+   },
+   "requires": "q_tree",
+   "visual": {
+    "type": "procedural",
+    "shape": "eraser",
+    "scale": 1,
+    "flags": {
+     "calm": true
+    },
+    "floatPx": 0,
+    "dashed": false
+   }
+  }
+ ]
+}

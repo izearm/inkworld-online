@@ -1,0 +1,19 @@
+/* โหมดออนไลน์: หน้าเข้าสู่ระบบ / ตั้งชื่อ / ป้ายสถานะห้อง */
+body.online #menu .mbtn[data-panel="world"] { display: none; }
+#online-ui { position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; background: rgba(248, 244, 234, 0.92); }
+#online-ui.hidden { display: none; }
+#online-ui .ol-box { background: #fffdf6; padding: 18px 22px; min-width: 280px; max-width: 92vw; text-align: center; font-family: inherit; color: #1b1b1b; }
+#online-ui h1 { margin: 0 0 4px; font-size: 22px; }
+#online-ui h2 { margin: 0 0 8px; font-size: 18px; }
+#online-ui .ol-sub { margin: 0 0 10px; font-size: 12px; color: #555; }
+#online-ui label { display: block; text-align: left; font-size: 13px; margin: 6px 0; }
+#online-ui input { display: block; width: 100%; box-sizing: border-box; margin-top: 2px; padding: 7px 8px; font: inherit; font-size: 15px; border: 2px solid #1b1b1b; background: #fff; border-radius: 3px; }
+#online-ui .ol-err { min-height: 18px; color: #d23a2a; font-size: 12px; margin: 4px 0; }
+#online-ui .obtns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+#online-ui button, #online-ui .btn { font: inherit; font-size: 15px; padding: 7px 16px; border: 2px solid #1b1b1b; background: #fff; border-radius: 4px; cursor: pointer; color: #1b1b1b; text-decoration: none; }
+#online-ui .ol-link { display: inline-block; margin-top: 10px; font-size: 12px; color: #555; }
+#net-pill { position: absolute; top: 42px; right: 8px; z-index: 40; display: flex; align-items: center; gap: 6px; background: rgba(255, 253, 246, 0.9); border: 2px solid #1b1b1b; border-radius: 12px; padding: 2px 4px 2px 8px; font-size: 12px; pointer-events: auto; }
+#net-pill.hidden { display: none; }
+#net-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #d23a2a; }
+#net-pill .dot.on { background: #3c9a5c; }
+#net-pill button { font: inherit; font-size: 11px; padding: 1px 8px; border: 1.5px solid #1b1b1b; background: #fff; border-radius: 8px; cursor: pointer; }

@@ -1,0 +1,182 @@
+{
+ "schemaVersion": 1,
+ "revision": 1,
+ "weaponScalePerLevel": 0.28,
+ "rarities": [
+  {
+   "id": "normal",
+   "name": "ธรรมดา",
+   "color": "#3a3a3a",
+   "affixes": [
+    0,
+    0
+   ],
+   "weight": 60,
+   "dmgMult": 1
+  },
+  {
+   "id": "magic",
+   "name": "เวทมนตร์",
+   "color": "#2f6fd6",
+   "affixes": [
+    1,
+    2
+   ],
+   "weight": 30,
+   "dmgMult": 1.05
+  },
+  {
+   "id": "rare",
+   "name": "หายาก",
+   "color": "#b98f00",
+   "affixes": [
+    3,
+    4
+   ],
+   "weight": 9,
+   "dmgMult": 1.12
+  },
+  {
+   "id": "legend",
+   "name": "ตำนาน",
+   "color": "#e0661b",
+   "affixes": [
+    4,
+    5
+   ],
+   "weight": 1,
+   "dmgMult": 1.25
+  }
+ ],
+ "affixes": [
+  {
+   "id": "atkPct",
+   "word": "คม",
+   "text": "+{v}% พลังโจมตี",
+   "min": 6,
+   "max": 14,
+   "lvl": 0.6
+  },
+  {
+   "id": "crit",
+   "word": "แม่นยำ",
+   "text": "+{v}% โอกาสคริติคอล",
+   "min": 2,
+   "max": 6,
+   "lvl": 0.15
+  },
+  {
+   "id": "aspd",
+   "word": "ว่องไว",
+   "text": "+{v}% ความเร็วโจมตี",
+   "min": 5,
+   "max": 14,
+   "lvl": 0.3
+  },
+  {
+   "id": "hp",
+   "word": "อดทน",
+   "text": "+{v} HP สูงสุด",
+   "min": 8,
+   "max": 20,
+   "lvl": 4
+  },
+  {
+   "id": "ink",
+   "word": "หมึกเข้ม",
+   "text": "+{v} หมึกสูงสุด",
+   "min": 5,
+   "max": 12,
+   "lvl": 1.2
+  },
+  {
+   "id": "leech",
+   "word": "ดูดหมึก",
+   "text": "ดูดเลือด {v}% ของดาเมจ",
+   "min": 1,
+   "max": 4,
+   "lvl": 0.08
+  },
+  {
+   "id": "skillPct",
+   "word": "นักเวท",
+   "text": "+{v}% ดาเมจสกิล",
+   "min": 6,
+   "max": 15,
+   "lvl": 0.6
+  },
+  {
+   "id": "move",
+   "word": "ปลายเท้าเบา",
+   "text": "+{v}% ความเร็วเดิน",
+   "min": 3,
+   "max": 8,
+   "lvl": 0.1
+  },
+  {
+   "id": "fire",
+   "word": "เพลิง",
+   "text": "+{v} ดาเมจไฟ",
+   "min": 1,
+   "max": 4,
+   "lvl": 1.1,
+   "elem": "fire"
+  },
+  {
+   "id": "ice",
+   "word": "น้ำแข็ง",
+   "text": "+{v} ดาเมจน้ำแข็ง (ทำให้ช้า)",
+   "min": 1,
+   "max": 3,
+   "lvl": 0.9,
+   "elem": "ice"
+  },
+  {
+   "id": "bolt",
+   "word": "สายฟ้า",
+   "text": "+{v} ดาเมจสายฟ้า",
+   "min": 1,
+   "max": 5,
+   "lvl": 1.2,
+   "elem": "bolt"
+  },
+  {
+   "id": "def",
+   "word": "แข็งแรง",
+   "text": "+{v} ป้องกัน",
+   "min": 2,
+   "max": 6,
+   "lvl": 0.8
+  },
+  {
+   "id": "regen",
+   "word": "ฟื้นฟู",
+   "text": "+{v} หมึก/วินาที",
+   "min": 1,
+   "max": 2,
+   "lvl": 0.06
+  }
+ ],
+ "legendaryNames": [
+  "ปากกาขนนกของผู้ลบ",
+  "ไม้บรรทัดแห่งเส้นตรง",
+  "ดินสอทองรุ่นแรก",
+  "กรรไกรพับปราสาท",
+  "เปลือกหอยร้องเพลง",
+  "กิ่งต้นหมึก",
+  "ยางลบที่ไม่ยอมลบ",
+  "ชอล์กสุดท้ายของห้องเรียน"
+ ],
+ "elemColors": {
+  "fire": "#e0412b",
+  "ice": "#3a8de0",
+  "bolt": "#e8c21a"
+ },
+ "starterWeapon": {
+  "base": "sword",
+  "name": "ปากกาดาบ",
+  "rarity": "normal",
+  "ilvl": 1,
+  "affixes": []
+ }
+}

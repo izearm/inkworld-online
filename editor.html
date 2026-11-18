@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="th">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>Ink World Editor</title></head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-icon" aria-hidden="true">✎</span><div><strong>Ink World Editor</strong><small id="editor-version"></small></div></div>
+  <span id="cnt" role="status"></span>
+  <div class="toolbar" aria-label="จัดการ Draft">
+    <button id="b-try">ทดลองในเกม</button><button id="b-arena">ทดลองใน Arena</button><button id="b-zip" class="pri">ส่งออก ZIP</button>
+    <details class="actions"><summary>จัดการ Draft</summary><div class="action-menu">
+      <button id="b-dl">ส่งออก overrides.json</button><button id="b-up">นำเข้า JSON</button><button id="b-bundled">โหลด overrides ของเกม</button><button id="b-copy">คัดลอกสรุปการแก้ไข</button><button id="b-clr" class="danger">ล้าง Draft</button>
+    </div></details>
+  </div>
+  <input type="file" id="file" accept=".json" hidden>
+</header>
+<main>
+  <nav id="side" aria-label="หมวดข้อมูล"></nav>
+  <section id="list" aria-label="รายการ"></section>
+  <section id="form" aria-label="แก้ไขข้อมูล"></section>
+</main>
+<script type="module" src="/src/editorMain.ts"></script>
+</body></html>

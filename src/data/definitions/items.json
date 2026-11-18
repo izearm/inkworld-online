@@ -1,0 +1,185 @@
+{
+ "schemaVersion": 1,
+ "revision": 1,
+ "items": [
+  {
+   "id": "sword",
+   "type": "weapon",
+   "name": "ดาบ",
+   "min": 3,
+   "max": 6,
+   "speed": 1,
+   "range": 1.25,
+   "arc": 110,
+   "magic": 0,
+   "visual": {
+    "type": "procedural",
+    "shape": "sword",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "dagger",
+   "type": "weapon",
+   "name": "มีดสั้น",
+   "min": 2,
+   "max": 4,
+   "speed": 1.55,
+   "range": 1,
+   "arc": 90,
+   "magic": 0,
+   "visual": {
+    "type": "procedural",
+    "shape": "dagger",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "axe",
+   "type": "weapon",
+   "name": "ขวาน",
+   "min": 5,
+   "max": 10,
+   "speed": 0.7,
+   "range": 1.3,
+   "arc": 140,
+   "magic": 0,
+   "visual": {
+    "type": "procedural",
+    "shape": "axe",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "spear",
+   "type": "weapon",
+   "name": "หอก",
+   "min": 3,
+   "max": 7,
+   "speed": 0.9,
+   "range": 1.9,
+   "arc": 50,
+   "magic": 0,
+   "visual": {
+    "type": "procedural",
+    "shape": "spear",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "staff",
+   "type": "weapon",
+   "name": "คทา",
+   "min": 2,
+   "max": 5,
+   "speed": 0.9,
+   "range": 1.2,
+   "arc": 100,
+   "magic": 4,
+   "visual": {
+    "type": "procedural",
+    "shape": "staff",
+    "scale": 1,
+    "flags": {},
+    "floatPx": 0,
+    "dashed": false
+   }
+  },
+  {
+   "id": "torn_diary",
+   "type": "quest",
+   "name": "สมุดบันทึกขาดๆ",
+   "desc": "ลายมือสั่นๆ เขียนเรื่องชาสองถ้วย"
+  },
+  {
+   "id": "friend_drawing",
+   "type": "quest",
+   "name": "รูปวาดเด็กกับสไลม์",
+   "desc": "วาดด้วยดินสอทื่อๆ สองสามแท่ง"
+  },
+  {
+   "id": "sad_book",
+   "type": "quest",
+   "name": "หนังสือปกสีเทา",
+   "desc": "หนักกว่าที่คิด"
+  },
+  {
+   "id": "golden_pencil",
+   "type": "quest",
+   "name": "ดินสอทอง",
+   "desc": "เมล็ดพันธุ์ดินสอรุ่นแรก"
+  },
+  {
+   "id": "paper_window",
+   "type": "quest",
+   "name": "หน้าต่างกระดาษ",
+   "desc": "พับไว้สี่ทบ กางออกเห็นท้องฟ้า"
+  },
+  {
+   "id": "voice_shell",
+   "type": "quest",
+   "name": "เปลือกหอยเก็บเสียง",
+   "desc": "แนบหูแล้วได้ยินเสียงฮัมเบาๆ"
+  },
+  {
+   "id": "last_seed",
+   "type": "quest",
+   "name": "เมล็ดสุดท้าย",
+   "desc": "หมึกหยดสุดท้ายของต้นหมึก"
+  },
+  {
+   "id": "laugh_piece",
+   "type": "quest",
+   "name": "เสียงหัวเราะที่หล่นหาย",
+   "desc": "เศษกระดาษที่มีเสียงหัวเราะติดอยู่"
+  },
+  {
+   "id": "shiny_goo",
+   "type": "quest",
+   "name": "เมือกแวววาว",
+   "desc": "สไลม์ชอบมาก"
+  },
+  {
+   "id": "bookmark",
+   "type": "quest",
+   "name": "ที่คั่นหนังสือ",
+   "desc": "คั่นไว้หน้าที่ยังอ่านไม่จบ"
+  },
+  {
+   "id": "pencil_seed",
+   "type": "quest",
+   "name": "เมล็ดดินสอ",
+   "desc": "ปลูกแล้วงอกเป็นดินสอ HB"
+  },
+  {
+   "id": "paper_bird",
+   "type": "quest",
+   "name": "นกกระดาษ",
+   "desc": "พับไม่ค่อยเนียน"
+  },
+  {
+   "id": "ink_bubble",
+   "type": "quest",
+   "name": "ฟองหมึก",
+   "desc": "แตกแล้วได้ยินเสียงคลื่น"
+  },
+  {
+   "id": "ink_leaf",
+   "type": "quest",
+   "name": "ใบหมึก",
+   "desc": "ใบไม้ที่ร่วงจากต้นหมึก"
+  }
+ ]
+}

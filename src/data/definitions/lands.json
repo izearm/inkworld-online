@@ -1,0 +1,146 @@
+{
+ "schemaVersion": 1,
+ "revision": 1,
+ "items": [
+  {
+   "id": "village",
+   "order": 0,
+   "name": "หมู่บ้านว่างเปล่า",
+   "mood": "เหงา เงียบ",
+   "story": "ไม่มีใครจำใครได้",
+   "puzzleText": "สอนวาดเส้น: เดินวาดทับเส้นประ",
+   "theme": "village",
+   "baseLevel": 1,
+   "color": "#e8b04a",
+   "mainQuest": "q_village",
+   "sideQuest": "s_village",
+   "sideItem": "laugh_piece",
+   "nextPage": "slime_cave",
+   "maps": [
+    "village_0",
+    "village_1",
+    "village_2"
+   ]
+  },
+  {
+   "id": "slime_cave",
+   "order": 1,
+   "name": "ถ้ำสไลม์",
+   "mood": "คิดถึงเพื่อน",
+   "story": "เด็กคนหนึ่งลืมเพื่อนที่เป็นสไลม์ แต่สไลม์ยังรออยู่หน้าถ้ำทุกวัน",
+   "puzzleText": "วาดสะพานข้ามเหว ตามหารูปวาดของเพื่อน",
+   "theme": "cave",
+   "baseLevel": 4,
+   "color": "#6fbf73",
+   "mainQuest": "q_slime",
+   "sideQuest": "s_slime",
+   "sideItem": "shiny_goo",
+   "nextPage": "ink_library",
+   "maps": [
+    "slime_cave_0",
+    "slime_cave_1",
+    "slime_cave_2"
+   ]
+  },
+  {
+   "id": "ink_library",
+   "order": 2,
+   "name": "ห้องสมุดหมึก",
+   "mood": "อยากจำ แต่ก็กลัวเจ็บ",
+   "story": "บรรณารักษ์ลบความทรงจำตัวเองทิ้ง แต่อยากจำได้อีกครั้ง",
+   "puzzleText": "ลบกำแพงดินสอด้วยยางลบ + ค้นกองกระดาษ",
+   "theme": "library",
+   "baseLevel": 7,
+   "color": "#7d8fd8",
+   "mainQuest": "q_library",
+   "sideQuest": "s_library",
+   "sideItem": "bookmark",
+   "nextPage": "pencil_field",
+   "maps": [
+    "ink_library_0",
+    "ink_library_1",
+    "ink_library_2"
+   ]
+  },
+  {
+   "id": "pencil_field",
+   "order": 3,
+   "name": "ทุ่งดินสอ",
+   "mood": "อบอุ่น ขำๆ",
+   "story": "ชาวนาปลูกดินสอแทนข้าว เพราะไม่มีใครวาดรูปแล้ว",
+   "puzzleText": "ต่อเส้นหมึกให้ครบวงจร + ค้นกองฟาง",
+   "theme": "field",
+   "baseLevel": 10,
+   "color": "#f0c43c",
+   "mainQuest": "q_field",
+   "sideQuest": "s_field",
+   "sideItem": "pencil_seed",
+   "nextPage": "folded_castle",
+   "maps": [
+    "pencil_field_0",
+    "pencil_field_1",
+    "pencil_field_2"
+   ]
+  },
+  {
+   "id": "folded_castle",
+   "order": 4,
+   "name": "ปราสาทพับ",
+   "mood": "กลัวการออกไปข้างนอก",
+   "story": "เจ้าชายพับกระดาษเป็นปราสาทเพื่อซ่อนตัว เพราะกลัวถูกลบอีก",
+   "puzzleText": "พับกระดาษเปิด/ปิดทาง",
+   "theme": "castle",
+   "baseLevel": 13,
+   "color": "#e07fa0",
+   "mainQuest": "q_castle",
+   "sideQuest": "s_castle",
+   "sideItem": "paper_bird",
+   "nextPage": "ink_sea",
+   "maps": [
+    "folded_castle_0",
+    "folded_castle_1",
+    "folded_castle_2"
+   ]
+  },
+  {
+   "id": "ink_sea",
+   "order": 5,
+   "name": "ทะเลหมึก",
+   "mood": "เศร้าแต่สวย",
+   "story": "นางเงือกร้องเพลงไม่ได้แล้ว เพราะเสียงถูกลบไปกับหน้ากระดาษ",
+   "puzzleText": "สลับหมึกดำ-ขาว เปิดประตูหมึก",
+   "theme": "sea",
+   "baseLevel": 16,
+   "color": "#4aa6c9",
+   "mainQuest": "q_sea",
+   "sideQuest": "s_sea",
+   "sideItem": "ink_bubble",
+   "nextPage": "ink_tree",
+   "maps": [
+    "ink_sea_0",
+    "ink_sea_1",
+    "ink_sea_2"
+   ]
+  },
+  {
+   "id": "ink_tree",
+   "order": 6,
+   "name": "ต้นหมึก",
+   "mood": "ความหวังสุดท้าย",
+   "story": "ต้นไม้ต้นสุดท้ายที่ยังผลิตหมึกได้ แต่กำลังจะแห้งตาย",
+   "puzzleText": "ทุกปริศนารวมกัน: สะพาน + ยางลบ + สลับหมึก + วงจร + ค้นหา",
+   "theme": "tree",
+   "baseLevel": 19,
+   "color": "#3c9a5c",
+   "mainQuest": "q_tree",
+   "sideQuest": "s_tree",
+   "sideItem": "ink_leaf",
+   "nextPage": null,
+   "maps": [
+    "ink_tree_0",
+    "ink_tree_1",
+    "ink_tree_2"
+   ]
+  }
+ ]
+}

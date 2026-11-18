@@ -1,0 +1,388 @@
+{
+ "version": 1,
+ "ops": [
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "sword",
+    "img"
+   ],
+   "value": "custom/weaponBases_sword_img_mwgs8q8j.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "dagger",
+    "img"
+   ],
+   "value": "custom/weaponBases_dagger_img_mwgs8sg8.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "axe",
+    "img"
+   ],
+   "value": "custom/weaponBases_axe_img_mwgs8v3t.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "spear",
+    "img"
+   ],
+   "value": "custom/weaponBases_spear_img_mwgs8xpf.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "staff",
+    "img"
+   ],
+   "value": "custom/weaponBases_staff_img_mwgs90ht.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "spear",
+    "range"
+   ],
+   "value": 3
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "spear",
+    "min"
+   ],
+   "value": 4
+  },
+  {
+   "op": "set",
+   "path": [
+    "weaponBases",
+    "spear",
+    "max"
+   ],
+   "value": 12
+  },
+  {
+   "op": "set",
+   "path": [
+    "affixes",
+    "atkPct",
+    "word"
+   ],
+   "value": "ความแรง"
+  },
+  {
+   "op": "set",
+   "path": [
+    "affixes",
+    "crit",
+    "word"
+   ],
+   "value": "ทะลวง"
+  },
+  {
+   "op": "set",
+   "path": [
+    "affixes",
+    "move",
+    "word"
+   ],
+   "value": "พริ้วไหว"
+  },
+  {
+   "op": "set",
+   "path": [
+    "affixes",
+    "def",
+    "word"
+   ],
+   "value": "อึดถึก"
+  },
+  {
+   "op": "set",
+   "path": [
+    "affixes",
+    "leech",
+    "word"
+   ],
+   "value": "แวมไพร"
+  },
+  {
+   "op": "set",
+   "path": [
+    "artifactDefs",
+    "fire",
+    "flavor"
+   ],
+   "value": "ความทรงจำที่อบอุ่น"
+  },
+  {
+   "op": "set",
+   "path": [
+    "statCaps",
+    "leech"
+   ],
+   "value": 0.1
+  },
+  {
+   "op": "set",
+   "path": [
+    "classes",
+    "drawer",
+    "hpRegen"
+   ],
+   "value": 1
+  },
+  {
+   "op": "set",
+   "path": [
+    "classes",
+    "drawer",
+    "inkRegen"
+   ],
+   "value": 0.7
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "robe",
+    "img"
+   ],
+   "value": "custom/gearBases_robe_img_mwgstjd0.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "trousers",
+    "img"
+   ],
+   "value": "custom/gearBases_trousers_img_mwgsu1zx.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "cloak",
+    "img"
+   ],
+   "value": "custom/gearBases_cloak_img_mwgsw0yr.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "windlegs",
+    "name"
+   ],
+   "value": "กางเกงนักล่าสายลม"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "windlegs",
+    "img"
+   ],
+   "value": "custom/gearBases_windlegs_img_mwgsx4vh.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "shorts",
+    "img"
+   ],
+   "value": "custom/gearBases_shorts_img_mwgsxvr9.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "vest",
+    "name"
+   ],
+   "value": "เกราะเบาเงาปลายปากกา"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "vest",
+    "img"
+   ],
+   "value": "custom/gearBases_vest_img_mwgszh4b.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "coat",
+    "img"
+   ],
+   "value": "custom/gearBases_coat_img_mwgt089c.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "greaves",
+    "name"
+   ],
+   "value": "กางเกงอัศวินพับ"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "greaves",
+    "img"
+   ],
+   "value": "custom/gearBases_greaves_img_mwgt1662.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "hidepants",
+    "name"
+   ],
+   "value": "กางเกงดินสอนักรบขวาน"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "hidepants",
+    "img"
+   ],
+   "value": "custom/gearBases_hidepants_img_mwgt2pd5.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "hide",
+    "name"
+   ],
+   "value": "เกาะดินสอนักรบขวาน"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "hide",
+    "img"
+   ],
+   "value": "custom/gearBases_hide_img_mwgt4l9d.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "earring",
+    "img"
+   ],
+   "value": "custom/gearBases_earring_img_mwgt6e7o.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "amulet",
+    "img"
+   ],
+   "value": "custom/gearBases_amulet_img_mwgt6rqj.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "bracelet",
+    "name"
+   ],
+   "value": "สายรัดข้อมือหมึก"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "ring",
+    "img"
+   ],
+   "value": "custom/gearBases_ring_img_mwgtats7.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "bracelet",
+    "img"
+   ],
+   "value": "custom/gearBases_bracelet_img_mwgtbohh.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "gearBases",
+    "charm",
+    "img"
+   ],
+   "value": "custom/gearBases_charm_img_mwgtci08.png"
+  },
+  {
+   "op": "set",
+   "path": [
+    "skills",
+    "dash_strike",
+    "power"
+   ],
+   "value": [
+    1,
+    1.2,
+    1.5,
+    1.9,
+    2.4
+   ]
+  },
+  {
+   "op": "set",
+   "path": [
+    "skills",
+    "dash_strike",
+    "dist"
+   ],
+   "value": 3.3
+  },
+  {
+   "op": "set",
+   "path": [
+    "skills",
+    "dash_strike",
+    "cd"
+   ],
+   "value": 2.8
+  },
+  {
+   "op": "set",
+   "path": [
+    "skills",
+    "dash_strike",
+    "ink"
+   ],
+   "value": 10
+  }
+ ]
+}
