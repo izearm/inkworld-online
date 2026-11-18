@@ -1,4 +1,6 @@
-# Render Blueprint — เว็บเกม + เซิร์ฟเวอร์ออนไลน์ + ฐานข้อมูล (บัญชีและเซฟ)
+# Render Blueprint — เว็บเกม + เซิร์ฟเวอร์ออนไลน์
+# ฐานข้อมูล: ใช้ Postgres ตัวที่มีอยู่แล้วในบัญชี (แพ็กฟรีมีได้ตัวเดียว)
+#   → ใส่ DATABASE_URL = "Internal Database URL" ของฐานข้อมูลนั้น ตอน Render ถามค่า
 services:
   - type: web
     name: inkworld-online
@@ -10,14 +12,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
-      - key: INVITE_CODES        # รหัสเชิญ (คั่นด้วย ,) Render จะถามตอนสร้าง
+      - key: INVITE_CODES        # รหัสเชิญ (คั่นด้วย ,)
         sync: false
-      - key: ALLOWED_ORIGINS     # โดเมน GitHub Pages เช่น https://yourname.github.io (เว้นว่างได้)
+      - key: ALLOWED_ORIGINS     # https://izearm.github.io
         sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: inkworld-db
-          property: connectionString
-databases:
-  - name: inkworld-db
-    plan: free
+      - key: DATABASE_URL        # Internal Database URL ของ Postgres ที่มีอยู่
+        sync: false
