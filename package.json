@@ -1,6 +1,6 @@
 {
   "name": "inkworld-online",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "type": "module",
   "description": "Paper Dungeon: Ink World Online — ต่อจาก Beta 0.5.4 · เมืองออนไลน์ + ดันเจี้ยน Co-op 2 คน",
@@ -23,7 +23,8 @@
     "balance": "node tests/play/evalpage.cjs tests/play/cases/balance_full.js",
     "server": "node server/index.mjs",
     "start": "node server/index.mjs",
-    "test:online": "vite build && node tests/play/online_coop.cjs"
+    "test:online": "vite build && node tests/play/online_coop.cjs",
+    "build:offline": "vite build --mode offline --outDir dist-offline"
   },
   "dependencies": {
     "pg": "^8.23.1",

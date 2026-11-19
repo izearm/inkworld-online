@@ -1,6 +1,7 @@
 // Ink World — ทางเข้าเกมทางเดียว (ต้องออนไลน์เสมอ)
 // ลานต้นหมึก → เข้าเกม → ID/รหัส (สมัครได้) → ตั้งชื่อ → เนื้อเรื่อง → จบ 7 ด่าน → เมืองออนไลน์ (วางบนแผนที่โลก) → ฟาร์มด่านเก่า/ด่านออนไลน์
 // เซฟอยู่บนบัญชีเท่านั้น · ?preview=1 / ?cave=1 (จาก Editor) ยังเปิดแบบเดิมโดยไม่ต้องล็อกอิน
+// โหมดออฟไลน์ (npm run build:offline → dist-offline): ลานต้นหมึก → เข้าเกม → เซฟในเบราว์เซอร์ · ไม่มีบัญชี/เมืองออนไลน์/Co-op
 import './play.css';
 import './online/online.css';
 import Phaser from 'phaser';
@@ -19,7 +20,9 @@ const cavePreview = params.get('cave') === '1';
 const devPreview = cavePreview || params.getAll('preview').includes('1');
 if (cavePreview) w.PD_DATA.testmap = lanternCavePreview;
 
+const OFFLINE = (import.meta as any).env?.VITE_OFFLINE === '1';   // ตั้งจาก .env.offline ตอน build:offline
 if (devPreview) PD.Save.disablePersistence();      // เครื่องมือ Editor: เปิดแบบออฟไลน์เดิม
+else if (OFFLINE) bootOffline();
 else bootOnline();
 
 const { W, H } = playSize(w.PD_DATA.config.lowResHeight);
@@ -184,4 +187,40 @@ function bootOnline() {
   const t = getToken();
   if (t) Api.me(t).then(a => { acc = a; if (title.active && title.near) title.render(); }).catch(() => setToken(''));
   w.__online = { syncNow, title, get acc() { return acc; }, get inGame() { return inGame; }, net: null as Net | null };
+}
+
+// ---------- โหมดออฟไลน์: ลานต้นหมึกเดียวกัน แต่เซฟลง localStorage ของเบราว์เซอร์ ----------
+// เลิกใช้เมื่อไหร่ก็แค่ไม่ build:offline อีก (โค้ดออนไลน์ไม่ต้องแก้)
+function bootOffline() {
+  installTitleField(w.PD_DATA);
+  let inGame = false;
+  const origWrite = PD.Save.write.bind(PD.Save);
+  PD.Save.write = (S: any) => (inGame ? origWrite(S) : true);   // อยู่ในลานต้นหมึก: ไม่เขียนทับเซฟจริง
+  const title = new TitleField(() => {
+    const has = PD.Save.has();
+    return {
+      html: '<div class="tp-menu"><button id="tp-play">เข้าเกม<small>' + (has ? 'เล่นต่อ' : 'เริ่มเรื่องใหม่') + '</small></button>' +
+        '<button id="tp-view" class="soon">เข้าชม<small>เร็วๆ นี้</small></button><button class="soon" disabled>เร็วๆ นี้</button></div>' +
+        (has ? '<a class="ol-link" id="tp-new">เริ่มเกมใหม่ (ลบเซฟเดิม)</a>' : '') +
+        '<p class="ol-sub" style="margin-top:6px">เวอร์ชันออฟไลน์ · เซฟอยู่ในเบราว์เซอร์นี้</p>',
+      bind: (r: HTMLElement) => {
+        (r.querySelector('#tp-play') as HTMLElement).onclick = () => enter();
+        (r.querySelector('#tp-view') as HTMLElement).onclick = () => G.toast('โหมดเข้าชมเนื้อเรื่อง เร็วๆ นี้', '#777');
+        const nw = r.querySelector('#tp-new') as HTMLElement | null;
+        if (nw) nw.onclick = () => UI.confirm('เริ่มเกมใหม่? เซฟเดิมในเบราว์เซอร์นี้จะถูกลบ', () => { PD.Save.clear(); enter(); });
+      }
+    };
+  });
+  function enter() {
+    title.stop(); inGame = true;
+    if (PD.Save.has()) { if (!G.continueGame()) G.newGame(); } else G.newGame();
+    UI.showHud(true);
+  }
+  UI.showTitle = () => {   // ตอนเปิดเกม และปุ่ม "กลับหน้าแรก" ในเมนูหยุด
+    if (inGame) { G.save(); inGame = false; }
+    title.start(PD.Save.read() || undefined);
+  };
+  const origFrame = G.frame;
+  G.frame = function (dt: number) { origFrame.call(G, dt); title.tick(); };
+  w.__offline = { title, get inGame() { return inGame; } };
 }
